@@ -37,8 +37,15 @@ def get_discriminator():
     discriminator.add(Flatten())
     discriminator.add(Dense(1, activation='sigmoid'))
 
+    # print discriminator summary
+    discriminator.summary()
+
     # create model that takes in input and returns probability
     img = Input(shape=img_shape)
     probability = discriminator(img)
 
     return Model(img, probability)
+
+
+if __name__ == '__main__':
+    model = get_discriminator()
