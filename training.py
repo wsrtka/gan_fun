@@ -3,16 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from keras import Input, Model
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam
 
 from dataset import get_dataset
 from discriminator import get_discriminator
 from generator import get_generator
 
 
-def get_combined():
+def get_models():
     # create optimizer
-    optimizer = Adam(learning_rate=0.0002, beta=0.5)
+    optimizer = Adam(learning_rate=0.0002, beta_1=0.5)
 
     # build discriminator
     discriminator = get_discriminator()
@@ -31,11 +31,11 @@ def get_combined():
     combined = Model(z, valid)
     combined.compile(loss='binary_crossentropy', optimizer=optimizer)
 
-    return combined
+    return generator, discriminator, combined
 
 
 def plot_generated_images(epoch, generator, examples=100, dim=(10, 10), figsize=(10, 10)):
-    noise = np.random.normal(0, 1, size=[examples, dim])
+    noise = np.random.normal(0, 1, size=(examples, 100))
     generated_images = generator.predict(noise)
     generated_images = generated_images.reshape(examples, 28, 28)
 
@@ -77,4 +77,7 @@ def train(epochs: int, X_train, generator: Model, discriminator: Model, combined
 
 
 if __name__ == '__main__':
-    ...
+    X_train = get_dataset()
+    generator, discriminator, combined = get_models()
+
+    train(10000, X_train, generator, discriminator, combined)
